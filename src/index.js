@@ -136,7 +136,7 @@ const obs = new IntersectionObserver(entries => {
     el.dispatchEvent(event)
 
     // unobserve if once only
-    if(isInside && el.dataset['viewport.once']) {
+    if(isInside && typeof el.dataset['viewport.once'] !== 'undefined') {
       unobserve(el)
     }
   }
