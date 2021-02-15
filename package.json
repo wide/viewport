@@ -1,6 +1,6 @@
 {
   "name": "@wide/viewport",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Handle intersection between elements and the viewport.",
   "license": "MIT",
   "author": "Aymeric Assier (https://github.com/myeti)",
@@ -21,8 +21,8 @@
     "prepare": "rimraf lib/ && npm run build"
   },
   "dependencies": {
-    "intersection-observer": "^0.7.0",
-    "@wide/dom-observer": "^2.0.0"
+    "intersection-observer": "^0.12.0",
+    "@wide/dom-observer": "^2.0.1"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
