@@ -13,10 +13,10 @@ const DEFAULT_NAME = 'viewport'
  * @type {Object<String, Function>}
  */
 const CLASSLIST = {
-  initial: name => getClasslist(name),
-  enter:   name => getClasslist(name, '-enter'),
-  active:  name => getClasslist(name, '-active'),
-  leave:   name => getClasslist(name, '-leave')
+  initial: name => getClassname(name),
+  enter:   name => getClassname(name, '-enter'),
+  active:  name => getClassname(name, '-active'),
+  leave:   name => getClassname(name, '-leave')
 }
 
 
@@ -34,7 +34,7 @@ export const OBS_CONFIG = {
  * @param {String} name 
  * @param {String} state 
  */
-function getClasslist(name = DEFAULT_NAME, state = '') {
+function getClassname(name = DEFAULT_NAME, state = '') {
   return (name.trim() === '') 
     ? `${DEFAULT_NAME}${state}`
     : `${name}${state}`
