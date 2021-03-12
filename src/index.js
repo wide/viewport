@@ -13,10 +13,10 @@ const DEFAULT_NAME = 'viewport'
  * @type {Object<String, Function>}
  */
 const CLASSLIST = {
-  initial: (name = DEFAULT_NAME) => name,
-  enter:   (name = DEFAULT_NAME) => `${name}-enter`,
-  active:  (name = DEFAULT_NAME) => `${name}-active`,
-  leave:   (name = DEFAULT_NAME) => `${name}-leave`
+  initial: name => getClasslist(name),
+  enter:   name => getClasslist(name, '-enter'),
+  active:  name => getClasslist(name, '-active'),
+  leave:   name => getClasslist(name, '-leave')
 }
 
 
@@ -30,6 +30,18 @@ export const OBS_CONFIG = {
 
 
 /**
+ * Returns the name of the css class based on the state of the viewport
+ * @param {String} name 
+ * @param {String} state 
+ */
+function getClasslist(name = DEFAULT_NAME, state = '') {
+  return (name.trim() === '') 
+    ? `${DEFAULT_NAME}${state}`
+    : `${name}${state}`
+}
+
+
+/**
  * Check element state
  * @param {HTMLElement} el 
  * @param {String} state 
@@ -39,7 +51,6 @@ export const OBS_CONFIG = {
 function isState(el, state, name) {
   return el.classList.contains(CLASSLIST[state](name))
 }
-
 
 
 /**
