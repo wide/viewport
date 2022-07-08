@@ -1,6 +1,6 @@
 {
   "name": "@wide/viewport",
-  "version": "2.0.3",
+  "version": "2.1.1",
   "description": "Handle intersection between elements and the viewport.",
   "license": "MIT",
   "author": "Aymeric Assier (https://github.com/myeti)",
@@ -14,19 +14,20 @@
   },
   "main": "lib",
   "engines": {
-    "node": ">=10.13.0"
+    "node": ">=12.18.0"
   },
   "scripts": {
-    "build": "babel src/ -d lib/ --presets babel-preset-es2015",
+    "build": "babel src/ -d lib/ --presets=@babel/preset-env",
     "prepare": "rimraf lib/ && npm run build"
   },
   "dependencies": {
     "intersection-observer": "^0.12.0",
-    "@wide/dom-observer": "^2.0.1"
+    "@wide/dom-observer": "^2.1.1"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-preset-es2015": "6.24.1",
-    "rimraf": "^3.0.0"
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "rimraf": "^3.0.2"
   }
 }

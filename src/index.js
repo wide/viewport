@@ -1,5 +1,11 @@
 import observe from '@wide/dom-observer'
 
+/**
+ * Define if this is the 1st execution of the Intersection Observer
+ * @type {Boolean}
+ */
+let IOBSERVER_FIRST_INIT = true
+
 
 /**
  * Default class prefix
@@ -31,11 +37,11 @@ export const OBS_CONFIG = {
 
 /**
  * Returns the name of the css class based on the state of the viewport
- * @param {String} name 
- * @param {String} state 
+ * @param {String} name
+ * @param {String} state
  */
 function getClassname(name = DEFAULT_NAME, state = '') {
-  return (name.trim() === '') 
+  return (name.trim() === '')
     ? `${DEFAULT_NAME}${state}`
     : `${name}${state}`
 }
@@ -43,9 +49,9 @@ function getClassname(name = DEFAULT_NAME, state = '') {
 
 /**
  * Check element state
- * @param {HTMLElement} el 
- * @param {String} state 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} state
+ * @param {String} name
  * @return {Boolean}
  */
 function isState(el, state, name) {
@@ -55,67 +61,93 @@ function isState(el, state, name) {
 
 /**
  * Set initial state
- * @param {HTMLElement} el 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} name
  */
-function setInatial(el, name) {
+function setInitial(el, name) {
   el.classList.add(CLASSLIST.initial(name))
 }
 
 
 /**
  * Set enter state
- * @param {HTMLElement} el 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} name
  */
 function setEnter(el, name) {
+  el.addEventListener('animationend', e => setActive(el, name), { once: true })
+  el.addEventListener('transitionend', e => setActive(el, name), { once: true })
+
   el.classList.add(CLASSLIST.enter(name))
   el.classList.remove(CLASSLIST.active(name))
   el.classList.remove(CLASSLIST.leave(name))
-  el.addEventListener('animationend', e => setActive(el, name), { once: true })
-  el.addEventListener('transitionend', e => setActive(el, name), { once: true })
 }
 
 
 /**
  * Set active state
- * @param {HTMLElement} el 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} name
  */
 function setActive(el, name) {
+  el.removeEventListener('animationend', e => setActive(el, name), { once: true })
+  el.removeEventListener('transitionend', e => setActive(el, name), { once: true })
+
   el.classList.remove(CLASSLIST.enter(name))
   el.classList.add(CLASSLIST.active(name))
   el.classList.remove(CLASSLIST.leave(name))
-  el.removeEventListener('animationend', e => setActive(el, name), { once: true })
-  el.removeEventListener('transitionend', e => setActive(el, name), { once: true })
 }
 
 
 /**
  * Set leave state
- * @param {HTMLElement} el 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} name
  */
 function setLeave(el, name) {
+  el.addEventListener('animationend', e => setInactive(el, name), { once: true })
+  el.addEventListener('transitionend', e => setInactive(el, name), { once: true })
+
   el.classList.remove(CLASSLIST.enter(name))
   el.classList.remove(CLASSLIST.active(name))
   el.classList.add(CLASSLIST.leave(name))
-  el.addEventListener('animationend', e => setInactive(el, name), { once: true })
-  el.addEventListener('transitionend', e => setInactive(el, name), { once: true })
 }
 
 
 /**
  * Set inactive state
- * @param {HTMLElement} el 
- * @param {String} name 
+ * @param {HTMLElement} el
+ * @param {String} name
  */
 function setInactive(el, name) {
+  el.removeEventListener('animationend', e => setInactive(el, name), { once: true })
+  el.removeEventListener('transitionend', e => setInactive(el, name), { once: true })
+
   el.classList.remove(CLASSLIST.enter(name))
   el.classList.remove(CLASSLIST.active(name))
   el.classList.remove(CLASSLIST.leave(name))
-  el.removeEventListener('animationend', e => setInactive(el, name), { once: true })
-  el.removeEventListener('transitionend', e => setInactive(el, name), { once: true })
+}
+
+
+/**
+ * Get details about the element, like the scroll direction
+ * but also the triggering edge from the window
+ * @param {Object} entry
+ */
+function viewportEventDetail(entry) {
+  let output = null
+
+  if (!IOBSERVER_FIRST_INIT) {
+    output = entry.boundingClientRect.top < 0
+      ? entry.isIntersecting
+        ? { edge: 'top', scroll: 'up' }
+        : { edge: 'top', scroll: 'down' }
+      : entry.isIntersecting
+        ? { edge: 'bottom', scroll: 'down' }
+        : { edge: 'bottom', scroll: 'up' }
+  }
+
+  return output
 }
 
 
@@ -134,16 +166,19 @@ const obs = new IntersectionObserver(entries => {
     const isInitial = isState(el, 'initial', name)
 
     // set initial state
-    if(!isInitial) setInatial(el, name)
+    if(!isInitial) setInitial(el, name)
 
     // element is entering viewport
     if(isInside && !isActive) setEnter(el, name)
-    
+
     // element is leaving viewport
     else if(!isInside && isActive) setLeave(el, name)
 
     // trigger local event
-    const event = new CustomEvent(`viewport.${isInside ? 'enter' : 'leave'}`)
+    const event = new CustomEvent(
+      `viewport.${isInside ? 'enter' : 'leave'}`,
+      { detail: viewportEventDetail(entries[i]) }
+    )
     el.dispatchEvent(event)
 
     // unobserve if once only
@@ -151,6 +186,8 @@ const obs = new IntersectionObserver(entries => {
       unobserve(el)
     }
   }
+
+  IOBSERVER_FIRST_INIT = false
 }, OBS_CONFIG)
 
 
