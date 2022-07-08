@@ -20,8 +20,10 @@ import '@wide/viewport'
 <div data-viewport></div>
 ```
 
-These elements will triggers 2 events when they appear in the viewport and when they leave:
+These elements will triggers 2 events when they appear in the viewport and when they leave :
 ```js
+// use `e.detail` to get information about the scroll direction or the
+// appearance edge of the element (e.g: { edge: 'top', scroll: 'up' })
 div.addEventListener('viewport.enter', e => {})
 div.addEventListener('viewport.leave', e => {})
 ```
