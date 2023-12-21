@@ -1,6 +1,6 @@
 {
   "name": "@wide/viewport",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Handle intersection between elements and the viewport.",
   "license": "MIT",
   "author": "Aymeric Assier (https://github.com/myeti)",
