@@ -93,7 +93,7 @@ function setActive(el, name) {
   el.removeEventListener('animationend', e => setActive(el, name), { once: true })
   el.removeEventListener('transitionend', e => setActive(el, name), { once: true })
 
-  el.classList.remove(CLASSLIST.enter(name))
+  el.classList.add(CLASSLIST.enter(name))
   el.classList.add(CLASSLIST.active(name))
   el.classList.remove(CLASSLIST.leave(name))
 }
